@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/alwaysday1/twittercharacter"
+	"github.com/alwaysday1/twitter-character-counter"
 )
 
 func main() {
