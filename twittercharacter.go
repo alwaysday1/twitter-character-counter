@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 )
 
 const (
@@ -23,6 +22,11 @@ func isSpecialChar(r rune) bool {
 		return false // 忽略变体选择符
 	}
 	return unicode.Is(unicode.S, r) || unicode.Is(unicode.M, r) || unicode.Is(unicode.P, r) || unicode.Is(unicode.Sk, r)
+}
+
+// isChineseChar 判断字符是否为中文字符
+func isChineseChar(r rune) bool {
+	return unicode.Is(unicode.Han, r)
 }
 
 // findSpecialChars 查找文本中的所有表情符号和其他非标准的 Unicode 字符
@@ -58,7 +62,16 @@ func CountTweet(tweetText string) int {
 	// 计算推文的总长度
 	urlsLength := len(urls) * TWITTER_URL_SIZE
 	specialCharsLength := len(specialChars) * TWITTER_SPECIAL_CHAR_SIZE
-	tweetLength := utf8.RuneCountInString(tweetText) + urlsLength + specialCharsLength
+
+	// 计算剩余文本的长度
+	tweetLength := urlsLength + specialCharsLength
+	for _, char := range tweetText {
+		if isChineseChar(char) {
+			tweetLength += 2
+		} else {
+			tweetLength++
+		}
+	}
 
 	return tweetLength
 }
